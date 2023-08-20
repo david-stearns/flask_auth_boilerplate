@@ -1,0 +1,13 @@
+.vscode
+.DS_Store
+
+app/.env
+
+instance/
+
+notes.md
+
+app/static/.webassets-cache/
+app/static/dist/
+
+old_files
