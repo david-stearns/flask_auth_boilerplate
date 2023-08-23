@@ -1,7 +1,9 @@
 .vscode
 .DS_Store
 
+.env
 app/.env
+
 
 instance/
 
@@ -9,5 +11,7 @@ notes.md
 
 app/static/.webassets-cache/
 app/static/dist/
+
+app/__pycache__/
 
 old_files

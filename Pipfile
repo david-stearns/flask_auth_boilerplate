@@ -11,6 +11,9 @@ flask-wtf = "*"
 email-validator = "*"
 flask-assets = "*"
 libsass = "*"
+flask-mail = "*"
+python-dotenv = "*"
+itsdangerous = "*"
 
 [dev-packages]
 

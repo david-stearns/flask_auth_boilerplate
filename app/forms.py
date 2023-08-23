@@ -32,6 +32,46 @@ class RegistrationForm(FlaskForm):
                               render_kw={"placeholder": "confirm password"})
     submit = SubmitField('Register')
 
+
+class PasswordResetRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()], render_kw={"placeholder": "email"})
+    submit = SubmitField('Reset Password')
+
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('New Password', validators=[
+                             DataRequired(), EqualTo('password2', message='Passwords must match')],
+                             render_kw={"placeholder": "password"})
+    password2 = PasswordField('Confirm password', validators=[
+                              DataRequired()], render_kw={"placeholder": "confirm password"})
+    submit = SubmitField('Reset Password')
+
+
+class ResendConfirmationForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()], render_kw={"placeholder": "email"})
+    submit = SubmitField('Resend Confirmation')
+
+
+class PasswordUpdateForm(FlaskForm):
+    old_password = PasswordField('Current Password', validators=[
+        DataRequired()])
+    password = PasswordField('New password', validators=[
+                             DataRequired(), EqualTo('password2', message='Passwords must match')],
+                             render_kw={"placeholder": "password"})
+    password2 = PasswordField('Confirm new password', validators=[
+                              DataRequired()], render_kw={"placeholder": "confirm password"})
+    submit = SubmitField('Update Password')
+
+
+class EmailUpdateForm(FlaskForm):
+    old_email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                                 Email()], render_kw={"placeholder": "current email"})
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()], render_kw={"placeholder": "new email"})
+    submit = SubmitField('Update Email')
+
     # def validate_email(self, field):
     #     if User.query.filter_by(email=field.data).first():
     #         raise ValidationError('Email already registered.')
