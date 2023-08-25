@@ -24,6 +24,8 @@ $fullhd-enabled: false;
 //$control-border-width: 2px;
 // $input-border-color: transparent;
  $input-shadow: none;
+ //$control-radius
+
 
 // Import only what you need from Bulma
 @import "../bulma/bulma.sass";
@@ -36,3 +38,6 @@ $fullhd-enabled: false;
 // @import "../bulma/sass/components/navbar.sass";
 // @import "../bulma/sass/layout/hero.sass";
 // @import "../bulma/sass/layout/section.sass";
+
+
+//.button { border-radius: 0;}

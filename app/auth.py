@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
 from . import db
-from .forms import LoginForm, RegistrationForm, PasswordResetRequestForm, PasswordResetForm, ResendConfirmationForm
+from .forms import LoginForm, RegistrationForm, PasswordResetRequestForm, PasswordResetForm, ResendConfirmationForm, PasswordUpdateForm, EmailUpdateForm
 from .email import send_email
 import sys
 
@@ -61,7 +61,6 @@ def signup():
 
         # send email to new user
         token = new_user.generate_confirmation_token()
-        print(token, file=sys.stdout)
 
         send_email(new_user.email, "Confirm Your Account",
                    "auth/email/confirm", user=new_user, token=token)
@@ -97,14 +96,13 @@ def resend_confirmation():
             token = user.generate_confirmation_token()
             send_email(user.email, "Confirm Your Account",
                        "auth/email/confirm", user=user, token=token)
-            print(email, file=sys.stdout)
             flash('A new confirmation email has been sent to ' + email)
         else:
             flash('Email address does not exist')
     return render_template('resend_confirmation.html', form=form)
 
 
-# __________ User Password Reset __________
+# __________ User Forgot Password __________
 
 @auth.route('/reset', methods=['GET', 'POST'])
 def password_reset_request():
@@ -144,4 +142,42 @@ def password_reset(token):
 @auth.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html')
+    password_update_form = PasswordUpdateForm()
+    email_update_form = EmailUpdateForm()
+
+    if email_update_form.validate_on_submit():
+        # verify password
+        if check_password_hash(current_user.password, email_update_form.password.data):
+            # check to see if new email address in already in the db
+            user = User.query.filter_by(
+                email=email_update_form.email.data.lower()).first()
+            if user:
+                flash('Email address already exists', 'email_error')
+                return redirect(url_for('auth.account'))
+            else:
+                current_user.email = email_update_form.email.data
+                db.session.commit()
+                flash('Your email address has been updated.', 'email_success')
+        else:
+            flash('Invalid password.', 'email_error')
+        return redirect(url_for('auth.account'))
+    elif email_update_form.submit1.data:
+        for _, errors in email_update_form.errors.items():
+            for error in errors:
+                flash(error, 'email_error')
+
+    if password_update_form.validate_on_submit():
+        if check_password_hash(current_user.password, password_update_form.old_password.data):
+            current_user.password = generate_password_hash(
+                password_update_form.password.data, method='sha256')
+            db.session.commit()
+            flash('Your password has been updated.', 'password_success')
+        else:
+            flash('Invalid password.', 'password_error')
+        return redirect(url_for('auth.account'))
+    elif password_update_form.submit2.data:
+        for _, errors in password_update_form.errors.items():
+            for error in errors:
+                flash(error, 'password_error')
+
+    return render_template('account.html', name=current_user.name, email_update_form=email_update_form, password_update_form=password_update_form)

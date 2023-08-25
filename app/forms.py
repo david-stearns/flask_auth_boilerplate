@@ -54,23 +54,26 @@ class ResendConfirmationForm(FlaskForm):
     submit = SubmitField('Resend Confirmation')
 
 
+class EmailUpdateForm(FlaskForm):
+    password = PasswordField('Password', validators=[
+                             DataRequired()],
+                             render_kw={"placeholder": "Password"})
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email(), EqualTo('email2', message='Email addresses must match')], render_kw={"placeholder": "new email"})
+    email2 = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                              Email()], render_kw={"placeholder": "confirm new email"})
+    submit1 = SubmitField('Change')
+
+
 class PasswordUpdateForm(FlaskForm):
     old_password = PasswordField('Current Password', validators=[
-        DataRequired()])
+        DataRequired()], render_kw={"placeholder": "current password"})
     password = PasswordField('New password', validators=[
                              DataRequired(), EqualTo('password2', message='Passwords must match')],
-                             render_kw={"placeholder": "password"})
+                             render_kw={"placeholder": "new password"})
     password2 = PasswordField('Confirm new password', validators=[
-                              DataRequired()], render_kw={"placeholder": "confirm password"})
-    submit = SubmitField('Update Password')
-
-
-class EmailUpdateForm(FlaskForm):
-    old_email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                                 Email()], render_kw={"placeholder": "current email"})
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                             Email()], render_kw={"placeholder": "new email"})
-    submit = SubmitField('Update Email')
+                              DataRequired()], render_kw={"placeholder": "confirm new password"})
+    submit2 = SubmitField('Change')
 
     # def validate_email(self, field):
     #     if User.query.filter_by(email=field.data).first():

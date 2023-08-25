@@ -1,26 +1,89 @@
+
 {% extends "base.html" %} {% block content %}
-<div class="column is-4 is-offset-4">
-  <h3 class="title">Account Settings</h3>
-  <div class="box">
-    {% with messages = get_flashed_messages() %} {% if messages %}
-    <div class="notification is-danger">{{ messages[0] }}</div>
-    {% endif %} {% endwith %}
-    <form method="POST">
-      {{ form.hidden_tag() }}
 
-      <div class="field">
-        <div class="control">{{ form.email(class_="input") }}</div>
-      </div>
+<h1 class="title has-text-left">Account Settings</h1>
 
-      {% if form.email.errors %}
-      <ul class="errors">
-        {% for error in form.email.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %} {{ form.submit(class_="button is-block is-info is-fullwidth")
-      }}
-    </form>
-  </div>
+
+<div class="columns is-mobile is-multiline">
+    <div class="column is-narrow">
+        <h3 class="subtitle">Change Email Address</h3>
+        <div class="box">
+
+            {% with messages = get_flashed_messages(category_filter=['email_error']) %}
+            {% if messages %}
+            <div class="notification is-danger">{{ messages[0] }}</div>
+            {% endif %}
+            {% endwith %}
+
+            {% with messages = get_flashed_messages(category_filter=['email_success']) %}
+            {% if messages %}
+            <div class="notification is-success">{{ messages[0] }}</div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Email Form -->
+            <form method="post">
+                {{ email_update_form.hidden_tag() }}
+                <div class = "field">
+                    <div class = "control">
+                    {{ email_update_form.password(class="input") }}
+                    </div>
+                </div>
+                <div class = "field">
+                    <div class = "control">
+                    {{ email_update_form.email(class="input") }}
+                    </div>
+                </div>
+                <div class = "field">
+                    <div class = "control">
+                    {{ email_update_form.email2(class="input") }}
+                    </div>
+                </div>
+                {{ email_update_form.submit1(class_="button is-block is-info is-fullwidth") }}
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Form -->
+    <div class="column is-narrow">
+        <h3 class="subtitle">Change Password</h3>
+        <div class="box">
+
+            {% with messages = get_flashed_messages(category_filter=['password_error']) %}
+            {% if messages %}
+            <div class="notification is-danger">{{ messages[0] }}</div>
+            {% endif %}
+            {% endwith %}
+
+            {% with messages = get_flashed_messages(category_filter=['password_success']) %}
+            {% if messages %}
+            <div class="notification is-success">{{ messages[0] }}</div>
+            {% endif %}
+            {% endwith %}
+
+            <form method="post">
+                {{ password_update_form.hidden_tag() }}
+                <div class="field">
+                    <div class="control">
+                        {{ password_update_form.old_password(class="input") }}
+                    </div>  
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ password_update_form.password(class="input") }}
+                    </div>  
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ password_update_form.password2(class="input") }}
+                    </div>  
+                </div>
+                {{ password_update_form.submit2(class_="button is-block is-info is-fullwidth") }}
+            </form>
+        </div>
+    </div>
 </div>
+</body>
+</html>
+
 {% endblock %}
