@@ -1,89 +1,12 @@
-
 {% extends "base.html" %} {% block content %}
 
+<h1 class="title has-text-left">Hello, {{ name }}</h1>
 <h1 class="title has-text-left">Account Settings</h1>
-
-
-<div class="columns is-mobile is-multiline">
-    <div class="column is-narrow">
-        <h3 class="subtitle">Change Email Address</h3>
-        <div class="box">
-
-            {% with messages = get_flashed_messages(category_filter=['email_error']) %}
-            {% if messages %}
-            <div class="notification is-danger">{{ messages[0] }}</div>
-            {% endif %}
-            {% endwith %}
-
-            {% with messages = get_flashed_messages(category_filter=['email_success']) %}
-            {% if messages %}
-            <div class="notification is-success">{{ messages[0] }}</div>
-            {% endif %}
-            {% endwith %}
-
-            <!-- Email Form -->
-            <form method="post">
-                {{ email_update_form.hidden_tag() }}
-                <div class = "field">
-                    <div class = "control">
-                    {{ email_update_form.password(class="input") }}
-                    </div>
-                </div>
-                <div class = "field">
-                    <div class = "control">
-                    {{ email_update_form.email(class="input") }}
-                    </div>
-                </div>
-                <div class = "field">
-                    <div class = "control">
-                    {{ email_update_form.email2(class="input") }}
-                    </div>
-                </div>
-                {{ email_update_form.submit1(class_="button is-block is-info is-fullwidth") }}
-            </form>
-        </div>
-    </div>
-
-    <!-- Password Form -->
-    <div class="column is-narrow">
-        <h3 class="subtitle">Change Password</h3>
-        <div class="box">
-
-            {% with messages = get_flashed_messages(category_filter=['password_error']) %}
-            {% if messages %}
-            <div class="notification is-danger">{{ messages[0] }}</div>
-            {% endif %}
-            {% endwith %}
-
-            {% with messages = get_flashed_messages(category_filter=['password_success']) %}
-            {% if messages %}
-            <div class="notification is-success">{{ messages[0] }}</div>
-            {% endif %}
-            {% endwith %}
-
-            <form method="post">
-                {{ password_update_form.hidden_tag() }}
-                <div class="field">
-                    <div class="control">
-                        {{ password_update_form.old_password(class="input") }}
-                    </div>  
-                </div>
-                <div class="field">
-                    <div class="control">
-                        {{ password_update_form.password(class="input") }}
-                    </div>  
-                </div>
-                <div class="field">
-                    <div class="control">
-                        {{ password_update_form.password2(class="input") }}
-                    </div>  
-                </div>
-                {{ password_update_form.submit2(class_="button is-block is-info is-fullwidth") }}
-            </form>
-        </div>
-    </div>
+<div class="has-text-left">
+  <a href="{{ url_for('auth.change_email') }}"> Change Email </a>
 </div>
-</body>
-</html>
+<div class="has-text-left">
+  <a href="{{ url_for('auth.change_password') }}"> Change Password </a>
+</div>
 
 {% endblock %}

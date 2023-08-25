@@ -142,7 +142,32 @@ def password_reset(token):
 @auth.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    return render_template('account.html', name=current_user.name)
+
+
+@auth.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
     password_update_form = PasswordUpdateForm()
+    if password_update_form.validate_on_submit():
+        if check_password_hash(current_user.password, password_update_form.old_password.data):
+            current_user.password = generate_password_hash(
+                password_update_form.password.data, method='sha256')
+            db.session.commit()
+            flash('Your password has been updated.', 'password_success')
+        else:
+            flash('Invalid password.', 'password_error')
+        return redirect(url_for('auth.change_password'))
+    elif password_update_form.submit2.data:
+        for _, errors in password_update_form.errors.items():
+            for error in errors:
+                flash(error, 'password_error')
+    return render_template('change_password.html', password_update_form=password_update_form)
+
+
+@auth.route('/change_email', methods=['GET', 'POST'])
+@login_required
+def change_email():
     email_update_form = EmailUpdateForm()
 
     if email_update_form.validate_on_submit():
@@ -153,31 +178,17 @@ def account():
                 email=email_update_form.email.data.lower()).first()
             if user:
                 flash('Email address already exists', 'email_error')
-                return redirect(url_for('auth.account'))
+                return redirect(url_for('auth.change_email  '))
             else:
                 current_user.email = email_update_form.email.data
                 db.session.commit()
                 flash('Your email address has been updated.', 'email_success')
         else:
             flash('Invalid password.', 'email_error')
-        return redirect(url_for('auth.account'))
+        return redirect(url_for('auth.change_email'))
     elif email_update_form.submit1.data:
         for _, errors in email_update_form.errors.items():
             for error in errors:
                 flash(error, 'email_error')
 
-    if password_update_form.validate_on_submit():
-        if check_password_hash(current_user.password, password_update_form.old_password.data):
-            current_user.password = generate_password_hash(
-                password_update_form.password.data, method='sha256')
-            db.session.commit()
-            flash('Your password has been updated.', 'password_success')
-        else:
-            flash('Invalid password.', 'password_error')
-        return redirect(url_for('auth.account'))
-    elif password_update_form.submit2.data:
-        for _, errors in password_update_form.errors.items():
-            for error in errors:
-                flash(error, 'password_error')
-
-    return render_template('account.html', name=current_user.name, email_update_form=email_update_form, password_update_form=password_update_form)
+    return render_template('change_email.html', email_update_form=email_update_form)
