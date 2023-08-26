@@ -17,8 +17,9 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
-        if user.confirmed == 0:
-            flash('Please follow the link in your email to confirm your account.')
+        if user is not None and user.confirmed == 0:
+            flash(
+                'Please follow the link in your email to confirm your account.', 'success')
         elif user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
             # go to the next page if it exists, otherwise go to the profile page
@@ -27,7 +28,7 @@ def login():
                 next = url_for('main.profile')
             return redirect(next)
         flash(Markup(
-            'Invalid email or password. <a href="/reset" class="alert-link">Forgot Password?</a>'))
+            'Invalid email or password. <a href="/reset" class="alert-link">Forgot Password?</a>'), 'error')
 
     return render_template('login.html', form=form)
 
@@ -50,7 +51,7 @@ def signup():
         user = User.query.filter_by(email=form.email.data.lower()).first()
 
         if user:
-            flash('Email address already exists')
+            flash('Email address already exists', 'error')
             return redirect(url_for('auth.signup'))
 
         # create a new user with the form data and hash the password
@@ -65,7 +66,7 @@ def signup():
 
         send_email(new_user.email, "Confirm Your Account",
                    "auth/email/confirm", user=new_user, token=token)
-        flash(Markup('A confirmation email has been sent. If you did not recieve a link, please click <a href="/resend_confirmation" class="alert-link">here</a> to resend'))
+        flash(Markup('A confirmation email has been sent. If you did not recieve a link, please click <a href="/resend_confirmation" class="alert-link">here</a> to resend'), 'success')
         return redirect(url_for('auth.login'))
 
     return render_template('signup.html', form=form)
@@ -80,10 +81,10 @@ def confirm(token):
         user = User.query.get(confirmed_id)
         user.confirmed = True
         db.session.commit()
-        flash('You have confirmed your account! Please login to continue.')
+        flash('You have confirmed your account! Please login to continue.', 'success')
         return redirect(url_for('auth.login'))
     else:
-        flash(Markup('The confirmation link is invalid or has expired. Please click <a href="/resend_confirmation" class="alert-link">here</a> to resend confirmation email.'))
+        flash(Markup('The confirmation link is invalid or has expired. Please click <a href="/resend_confirmation" class="alert-link">here</a> to resend confirmation email.'), 'error')
         return redirect(url_for('auth.login'))
 
 
@@ -97,9 +98,10 @@ def resend_confirmation():
             token = user.generate_confirmation_token()
             send_email(user.email, "Confirm Your Account",
                        "auth/email/confirm", user=user, token=token)
-            flash('A new confirmation email has been sent to ' + email)
+            flash(
+                f'A new confirmation email has been sent to {email}', 'success')
         else:
-            flash('Email address does not exist')
+            flash('Email address does not exist', 'error')
     return render_template('resend_confirmation.html', form=form)
 
 
@@ -117,8 +119,11 @@ def password_reset_request():
             send_email(user.email, 'Reset Your Password',
                        'auth/email/reset_password',
                        user=user, token=token)
-        flash('An email with instructions to reset your password has been '
-              'sent to you.')
+            flash('An email with instructions to reset your password has been '
+                  'sent to you.', 'success')
+        else:
+            flash('Email address does not exist', 'error')
+
         return redirect(url_for('auth.login'))
     return render_template('reset_password_request.html', form=form)
 
@@ -131,7 +136,7 @@ def password_reset(token):
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
             db.session.commit()
-            flash('Your password has been updated.')
+            flash('Your password has been updated.', 'success')
             return redirect(url_for('auth.login'))
         else:
             return redirect(url_for('main.index'))
@@ -162,7 +167,7 @@ def change_password():
     elif form.submit2.data:
         for _, errors in form.errors.items():
             for error in errors:
-                flash(error, 'password_error')
+                flash(error, 'error')
     return render_template('change_password.html', form=form)
 
 
@@ -186,11 +191,11 @@ def change_email():
                 flash('Your email address has been updated.', 'success')
                 return redirect(url_for('auth.account'))
         else:
-            flash('Invalid password.', 'email_error')
+            flash('Invalid password.', 'error')
         return redirect(url_for('auth.change_email'))
     elif form.submit1.data:
         for _, errors in form.errors.items():
             for error in errors:
-                flash(error, 'email_error')
+                flash(error, 'error')
 
     return render_template('change_email.html', form=form)

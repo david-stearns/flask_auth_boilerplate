@@ -16,7 +16,7 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                             Email()], render_kw={"placeholder": "email"})
+                                             Email(message='Invalid email address')], render_kw={"placeholder": "email"})
 
     name = StringField('Name', validators=[DataRequired(), Length(
         1, 64)], render_kw={"placeholder": "name"})
@@ -26,8 +26,8 @@ class RegistrationForm(FlaskForm):
     #                                                              'numbers, dots or underscores')],
     #                        render_kw={"placeholder": "username"})
     password = PasswordField('Password', validators=[
-                             DataRequired(), EqualTo('password2', message='Passwords must match')],
-                             render_kw={"placeholder": "password"})
+                             DataRequired(), Length(8, 64, message='Password must be between 8 and 64 characters'), EqualTo('password2', message='Passwords must match')],
+                             render_kw={"placeholder": "password"},)
     password2 = PasswordField('Confirm password', validators=[DataRequired()],
                               render_kw={"placeholder": "confirm password"})
     submit = SubmitField('Register')
@@ -50,7 +50,7 @@ class PasswordResetForm(FlaskForm):
 
 class ResendConfirmationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                             Email()], render_kw={"placeholder": "email"})
+                                             Email(message='Invalid email address')], render_kw={"placeholder": "email"})
     submit = SubmitField('Resend Confirmation')
 
 
