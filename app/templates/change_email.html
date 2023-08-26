@@ -3,35 +3,27 @@
   <div class="column is-narrow">
     <h3 class="subtitle">Change Email Address</h3>
     <div class="box">
-      {% with messages = get_flashed_messages(category_filter=['email_error'])
-      %} {% if messages %}
+      {% with messages = get_flashed_messages(category_filter=['error']) %} {%
+      if messages %}
       <div class="notification is-danger">{{ messages[0] }}</div>
       {% endif %} {% endwith %} {% with messages =
-      get_flashed_messages(category_filter=['email_success']) %} {% if messages
-      %}
+      get_flashed_messages(category_filter=['success']) %} {% if messages %}
       <div class="notification is-success">{{ messages[0] }}</div>
       {% endif %} {% endwith %}
 
       <!-- Email Form -->
       <form method="post">
-        {{ email_update_form.hidden_tag() }}
+        {{ form.hidden_tag() }}
         <div class="field">
-          <div class="control">
-            {{ email_update_form.password(class="input") }}
-          </div>
+          <div class="control">{{ form.password(class="input") }}</div>
         </div>
         <div class="field">
-          <div class="control">
-            {{ email_update_form.email(class="input") }}
-          </div>
+          <div class="control">{{ form.email(class="input") }}</div>
         </div>
         <div class="field">
-          <div class="control">
-            {{ email_update_form.email2(class="input") }}
-          </div>
+          <div class="control">{{ form.email2(class="input") }}</div>
         </div>
-        {{ email_update_form.submit1(class_="button is-block is-info
-        is-fullwidth") }}
+        {{ form.submit1(class_="button is-block is-info is-fullwidth") }}
       </form>
     </div>
   </div>

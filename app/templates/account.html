@@ -1,7 +1,13 @@
-{% extends "base.html" %} {% block content %}
-
+{% extends "base.html" %} {% block content %} {% with messages =
+get_flashed_messages(category_filter=['error']) %} {% if messages %}
+<div class="notification is-danger">{{ messages[0] }}</div>
+{% endif %} {% endwith %} {% with messages =
+get_flashed_messages(category_filter=['success']) %} {% if messages %}
+<div class="notification is-success">{{ messages[0] }}</div>
+{% endif %} {% endwith %}
 <h1 class="title has-text-left">Hello, {{ name }}</h1>
-<h1 class="title has-text-left">Account Settings</h1>
+<h3 class="subtitle has-text-left">{{ email }}</h3>
+<h2 class="title has-text-left">Account Settings</h1>
 <div class="has-text-left">
   <a href="{{ url_for('auth.change_email') }}"> Change Email </a>
 </div>
